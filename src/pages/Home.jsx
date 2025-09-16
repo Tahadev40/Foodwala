@@ -7,8 +7,8 @@ const menuItems = [
     {
       id: 1,
       name: 'Zinger Burger',
-      price: 350,
-      originalPrice: 400,
+      price: 230,
+      originalPrice: 310,
       description: 'Crispy fried chicken with spicy sauce, lettuce & mayo',
       image: './menu/bugi.webp',
       rating: 4.8,
@@ -19,7 +19,7 @@ const menuItems = [
     {
       id: 2,
       name: 'Fries',
-      price: 150,
+      price: 50,
       description: 'Golden crispy fries with our special seasoning',
       image: './menu/fries.jpeg',
       rating: 4.5,
@@ -29,8 +29,8 @@ const menuItems = [
     },
     {
       id: 3,
-      name: 'Chicken Broast',
-      price: 250,
+      name: 'Chicken Chest Broast',
+      price: 420,
       description: 'crispy chicken broast with fresh sauces and salad',
       image: './menu/broast.webp',
       rating: 4.7,
@@ -41,7 +41,7 @@ const menuItems = [
     {
       id: 4,
       name: 'Kabab Roll',
-      price: 280,
+      price: 90,
       description: 'Tender malai boti with creamy sauce in soft paratha',
       image: './menu/kababroll.jpeg',
       rating: 4.9,
@@ -55,7 +55,7 @@ const menuItems = [
     {
       icon: <Globe size={24} />,
       title: "Visit Our Website",
-      description: "Go to foodwala.com and browse our delicious menu"
+      description: "Go to foodwalaa.netlify.app and browse our delicious menu"
     },
     {
       icon: <Heart size={24} />,
@@ -75,7 +75,7 @@ const menuItems = [
     {
       icon: <Clock size={24} />,
       title: "Get Your Order",
-      description: "Sit back and relax! Your fresh food will arrive at your doorstep in just 30 minutes"
+      description: "Sit back and relax! Your fresh food will arrive at your doorstep in just 25 minutes"
     },
     {
       icon: <Heart size={24} />,
@@ -131,7 +131,7 @@ export default function FoodWalaHero() {
 
             {/* Subtitle */}
             <p className="text-xl sm:text-2xl text-gray-600 leading-relaxed max-w-xl font-light">
-              Order now on WhatsApp & get your food in 30 mins. Fresh ingredients, bold flavors, delivered fast!
+              Order now on WhatsApp & get your food in 20 mins. Fresh ingredients, bold flavors, delivered fast!
             </p>
 
             {/* Features */}
@@ -140,7 +140,7 @@ export default function FoodWalaHero() {
                 <div className="w-14 h-10 bg-red-100 rounded-full flex items-center justify-center">
                   <Clock className="w-5 h-5 text-red-500" />
                 </div>
-                <span className="font-semibold text-gray-700">30 min delivery</span>
+                <span className="font-semibold text-gray-700">20 min delivery</span>
               </div>
               <div className="flex items-center space-x-3 bg-white px-4 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-14 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -152,7 +152,7 @@ export default function FoodWalaHero() {
                 <div className="w-14 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <Truck className="w-5 h-5 text-blue-500" />
                 </div>
-                <span className="font-semibold text-gray-700">Free delivery</span>
+                <span className="font-semibold text-gray-700">Fast delivery</span>
               </div>
             </div>
 
@@ -200,7 +200,7 @@ export default function FoodWalaHero() {
                 
                 {/* Floating Price Tag */}
                 <div className="absolute -top-4 -right-4 bg-[#D84B37] text-white px-6 py-3 rounded-full font-bold text-lg shadow-xl animate-bounce">
-                  Rs. 250
+                  Rs. 230
                 </div>
               </div>
 
@@ -212,7 +212,7 @@ export default function FoodWalaHero() {
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">Fast</p>
-                    <p className="text-sm text-gray-600">30 mins</p>
+                    <p className="text-sm text-gray-600">20 mins</p>
                   </div>
                 </div>
               </div>

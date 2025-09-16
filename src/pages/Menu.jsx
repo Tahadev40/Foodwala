@@ -44,9 +44,9 @@ export default function FoodWalaMenuSection() {
   const categories = [
     { id: 'all', name: 'All Items' },
     { id: 'Burgers', name: 'Burgers' },
-    { id: 'rolls', name: 'Rolls' },
-    { id: 'Fries', name: 'Fries' },
-    { id: 'drinks', name: 'Drinks' },
+    { id: 'Rolls', name: 'Rolls' },
+    { id: 'Deals', name: 'Deals' },
+    { id: 'Drinks', name: 'Drinks' },
     { id: 'Extras', name: 'Extras' }
   ];
 
@@ -72,6 +72,40 @@ export default function FoodWalaMenuSection() {
         ? prev.filter(id => id !== itemId)
         : [...prev, itemId]
     );
+  };
+
+  // Add to Cart function
+  const addToCart = (item) => {
+    const existingCart = JSON.parse(localStorage.getItem('foodwalaCart') || '[]');
+    const existingItem = existingCart.find(cartItem => cartItem.id === item.id);
+
+    let updatedCart;
+    if (existingItem) {
+      updatedCart = existingCart.map(cartItem =>
+        cartItem.id === item.id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      );
+    } else {
+      updatedCart = [...existingCart, { ...item, quantity: 1 }];
+    }
+
+    localStorage.setItem('foodwalaCart', JSON.stringify(updatedCart));
+    
+    // Show success feedback
+    const button = document.querySelector(`[data-item-id="${item.id}"]`);
+    if (button) {
+      const originalContent = button.innerHTML;
+      button.style.backgroundColor = '#10b981';
+      button.innerHTML = '<span>✓ Added to Cart!</span>';
+      setTimeout(() => {
+        button.style.backgroundColor = '';
+        button.innerHTML = originalContent;
+      }, 1500);
+    }
+
+    // Dispatch custom event for cart update
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
   };
 
   return (
@@ -218,16 +252,15 @@ export default function FoodWalaMenuSection() {
                       <span>Available</span>
                     </div>
                   </div>
-                  <a
-                    href={`https://wa.me/923181375067?text=Hi%20Foodwala%20I%20want%20to%20place%20an%20order%20for%20${item.name}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    data-item-id={item.id}
+                    onClick={() => addToCart(item)}
                     className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 rounded-full font-bold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
                   >
                     <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-                    <span>Order now</span>
+                    <span>Add to Cart</span>
                     <ShoppingCart className="w-5 h-5" />
-                  </a>
+                  </button>
                 </div>
               </div>
             ))}

@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Menu from './pages/Menu';
+import Cart from './pages/Cart';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/menu" element={<Menu />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/about" element={<About />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       <Footer />
     </>
