@@ -108,10 +108,39 @@ export default function FoodWalaMenuSection() {
     window.dispatchEvent(new CustomEvent('cartUpdated'));
   };
 
+  // Cart icon state
+  const [cartCount, setCartCount] = useState(0);
+
+  // Update cart count on mount and when cart updates
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('foodwalaCart') || '[]');
+      setCartCount(cart.reduce((sum, item) => sum + item.quantity, 0));
+    };
+    updateCartCount();
+    window.addEventListener('cartUpdated', updateCartCount);
+    return () => window.removeEventListener('cartUpdated', updateCartCount);
+  }, []);
+
+  // Redirect to cart page
+  const goToCart = () => {
+    window.location.href = '/cart';
+  };
+
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-orange-10 to-red-10 min-h-screen mt-16">
+      {/* Cart Icon Floating Button */}
+      <button
+        onClick={goToCart}
+        className="fixed z-50 bottom-8 right-8 bg-orange-500 hover:bg-orange-600 text-white rounded-full shadow-lg w-16 h-16 flex flex-col items-center justify-center transition-all duration-300"
+        style={{ boxShadow: '0 8px 24px rgba(216,75,55,0.18)' }}
+        aria-label="View Cart"
+      >
+        <ShoppingCart className="w-7 h-7 mb-1" />
+        <span className="text-xs font-bold">{cartCount}</span>
+      </button>
+
       <div className="max-w-7xl mx-auto">
-        
         {/* Section Header */}
         <div className={`text-center mb-12 transition-all duration-1000 transform ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
