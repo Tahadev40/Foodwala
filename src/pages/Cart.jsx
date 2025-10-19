@@ -69,27 +69,46 @@ export default function CartPage() {
     return getTotalAmount() + getDeliveryCharge();
   };
 
-  const handleWhatsAppOrder = () => {
-    if (cart.length === 0) return;
-    if (!selectedArea) {
-      alert('Please select your delivery area first!');
-      return;
-    }
+const handleWhatsAppOrder = () => {
+  if (cart.length === 0) return;
+  if (!selectedArea) {
+    alert('Please select your delivery area first!');
+    return;
+  }
 
-    const orderDetails = cart.map(item => 
-      `${item.name} x${item.quantity} = Rs. ${item.price * item.quantity}`
-    ).join('%0A');
-    
-    const subtotal = getTotalAmount();
-    const deliveryCharge = getDeliveryCharge();
-    const total = getFinalTotal();
-    const totalItems = getTotalItems();
-    const areaName = selectedArea === 'ghareebabad' ? 'Ghareebabad' : 'Other Area';
-    
-    const message = `Hi Foodwala! I want to place an order:%0A%0A${orderDetails}%0A%0ASubtotal: Rs. ${subtotal}%0ADelivery (${areaName}): Rs. ${deliveryCharge}%0ATotal Items: ${totalItems}%0ATotal Amount: Rs. ${total}%0A%0ADelivery Area: ${areaName}%0A%0APlease confirm my order. Thank you!`;
-    
-    window.open(`https://wa.me/923181375067?text=${message}`, '_blank');
-  };
+  const orderDetails = cart.map(item => 
+    `${item.name} x${item.quantity} = Rs. ${item.price * item.quantity}`
+  ).join('\n');
+  
+  const subtotal = getTotalAmount();
+  const deliveryCharge = getDeliveryCharge();
+  const total = getFinalTotal();
+  const totalItems = getTotalItems();
+  const areaName = selectedArea === 'ghareebabad' ? 'Ghareebabad' : 'Other Area';
+
+  // ----------- Send to Make Webhook -----------
+  fetch("https://hook.us2.make.com/4w1b2ixpqg2vdcc324w236htrb5xnfx9", { // 🔥 use your webhook URL
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      items: cart,
+      subtotal,
+      deliveryCharge,
+      total,
+      totalItems,
+      area: areaName,
+      createdAt: new Date().toISOString()
+    })
+  }).then(res => console.log("Order sent to Make ✅")).catch(err => console.error(err));
+  // --------------------------------------------
+
+  // ----------- Send to WhatsApp -----------
+  const message = `Hi Foodwala! I want to place an order:\n\n${orderDetails}\n\nSubtotal: Rs. ${subtotal}\nDelivery (${areaName}): Rs. ${deliveryCharge}\nTotal Items: ${totalItems}\nTotal Amount: Rs. ${total}\n\nDelivery Area: ${areaName}\n\nPlease confirm my order. Thank you!`;
+  
+  window.open(`https://wa.me/923181375067?text=${encodeURIComponent(message)}`, '_blank');
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
