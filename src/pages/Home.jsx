@@ -1,55 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { Star, ArrowRight, ShoppingCart, Truck, Globe, Heart, MessageCircle, MapPin, Clock } from 'lucide-react';
+import RestaurantMenuApp from '../components/Restaurant';
 import { useNavigate } from 'react-router-dom';
 
 
-const menuItems = [
-    {
-      id: 1,
-      name: 'Zinger Burger',
-      price: 230,
-      originalPrice: 310,
-      description: 'Crispy fried chicken with spicy sauce, lettuce & mayo',
-      image: './menu/bugi.webp',
-      rating: 4.8,
-      reviews: 156,
-      isPopular: true,
-      cookTime: '12-15 min'
-    },
-    {
-      id: 2,
-      name: 'Fries',
-      price: 50,
-      description: 'Golden crispy fries with our special seasoning',
-      image: './menu/fries.jpeg',
-      rating: 4.5,
-      reviews: 89,
-      isPopular: false,
-      cookTime: '8-10 min'
-    },
-    {
-      id: 3,
-      name: 'Chicken Chest Broast',
-      price: 420,
-      description: 'crispy chicken broast with fresh sauces and salad',
-      image: './menu/broast.webp',
-      rating: 4.7,
-      reviews: 203,
-      isPopular: true,
-      cookTime: '15-18 min'
-    },
-    {
-      id: 4,
-      name: 'Kabab Roll',
-      price: 90,
-      description: 'Tender malai boti with creamy sauce in soft paratha',
-      image: './menu/kababroll.jpeg',
-      rating: 4.9,
-      reviews: 178,
-      isPopular: true,
-      cookTime: '15-18 min'
-    }
-  ];
+// const menuItems = [
+//     {
+//       id: 1,
+//       name: 'Zinger Burger',
+//       price: 230,
+//       originalPrice: 310,
+//       description: 'Crispy fried chicken with spicy sauce, lettuce & mayo',
+//       image: './menu/bugi.webp',
+//       rating: 4.8,
+//       reviews: 156,
+//       isPopular: true,
+//       cookTime: '12-15 min'
+//     },
+//     {
+//       id: 2,
+//       name: 'Fries',
+//       price: 50,
+//       description: 'Golden crispy fries with our special seasoning',
+//       image: './menu/fries.jpeg',
+//       rating: 4.5,
+//       reviews: 89,
+//       isPopular: false,
+//       cookTime: '8-10 min'
+//     },
+//     {
+//       id: 3,
+//       name: 'Chicken Chest Broast',
+//       price: 420,
+//       description: 'crispy chicken broast with fresh sauces and salad',
+//       image: './menu/broast.webp',
+//       rating: 4.7,
+//       reviews: 203,
+//       isPopular: true,
+//       cookTime: '15-18 min'
+//     },
+//     {
+//       id: 4,
+//       name: 'Kabab Roll',
+//       price: 90,
+//       description: 'Tender malai boti with creamy sauce in soft paratha',
+//       image: './menu/kababroll.jpeg',
+//       rating: 4.9,
+//       reviews: 178,
+//       isPopular: true,
+//       cookTime: '15-18 min'
+//     }
+//   ];
 
   const steps = [
     {
@@ -119,12 +120,12 @@ export default function FoodWalaHero() {
             {/* Main Heading */}
             <div className="space-y-4 " rel="preload">
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
-                Delicious, Fast
+                Good Food
                 <span className="block text-[#D84B37]">
-                  & Fresh Food
+                Fast Delivery
                 </span>
                 <span className="block text-gray-700 text-4xl sm:text-5xl lg:text-6xl">
-                  at Your Doorstep
+                Only in Mirpurkhas
                 </span>
               </h1>
             </div>
@@ -135,20 +136,20 @@ export default function FoodWalaHero() {
             </p>
 
             {/* Features */}
-            <div className="flex flex-wrap gap-8 py-4">
-              <div className="flex items-center space-x-3 bg-white px-4 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex flex-wrap gap-4 py-4">
+              <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-14 h-10 bg-red-100 rounded-full flex items-center justify-center">
                   <Clock className="w-5 h-5 text-red-500" />
                 </div>
                 <span className="font-semibold text-gray-700">20 min delivery</span>
               </div>
-              <div className="flex items-center space-x-3 bg-white px-4 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
+              {/* <div className="flex items-center space-x-3 bg-white px-4 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-14 h-10 bg-green-100 rounded-full flex items-center justify-center">
                   <Star className="w-5 h-5 text-green-500 fill-current" />
                 </div>
                 <span className="font-semibold text-gray-700">Fresh ingredients</span>
-              </div>
-              <div className="flex items-center space-x-3 bg-white px-4 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
+              </div> */}
+              <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-14 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                   <Truck className="w-5 h-5 text-blue-500" />
                 </div>
@@ -170,9 +171,17 @@ export default function FoodWalaHero() {
                   <Truck className="w-6 h-6" />
                 </div>
               </button>
-              <button className="border-3 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-10 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                View Menu
-              </button>
+              <button
+  onClick={() =>
+    document.getElementById("restaurant-menu")?.scrollIntoView({
+      behavior: "smooth",
+    })
+  }
+  className="border-3 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-10 py-5 rounded-full font-bold text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+>
+  View Shops
+</button>
+
             </div>
           </div>
 
@@ -245,116 +254,10 @@ export default function FoodWalaHero() {
           border-width: 3px;
         }
       `}</style>
-       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white mt-16">
-      <div className="max-w-7xl mx-auto">
-        
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            Our <span className="text-[#D84B37]">Menu</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Taste our most popular dishes made with fresh ingredients
-          </p>
-        </div>
+      <section id="restaurant-menu">
+  <RestaurantMenuApp />
+</section>
 
-        {/* Menu Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {menuItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 overflow-hidden border border-gray-100"
-            >
-              {/* Image Container */}
-              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-orange-100 to-red-100">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  loading="lazy"
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
-                />
-                
-                {/* Popular Badge */}
-                {item.isPopular && (
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-[#D84B37] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center space-x-1">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span>Popular</span>
-                    </span>
-                  </div>
-                )}
-
-                {/* Price Tag */}
-                <div className="absolute bottom-3 right-3 bg-white rounded-full px-3 py-2 shadow-lg">
-                  <div className="flex items-center space-x-1">
-                    {item.originalPrice && (
-                      <span className="text-xs text-gray-500 line-through">Rs. {item.originalPrice}</span>
-                    )}
-                    <span className="font-bold text-red-500 text-lg">Rs. {item.price}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                {/* Title */}
-                <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-red-500 transition-colors">
-                  {item.name}
-                </h3>
-
-                {/* Description */}
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {item.description}
-                </p>
-
-                {/* Rating & Time */}
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                  <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                    <span className="font-semibold">{item.rating}</span>
-                    <span>({item.reviews})</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4 text-gray-400" />
-                    <span>{item.cookTime}</span>
-                  </div>
-                </div>
-
-                {/* Order Button */}
-                <a 
-                    href="https://wa.me/923181375067?text=Hi%20Foodwala%20Team%2C%20I%20want%20to%20place%20an%20order!"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
-                  <span>Order Now</span>
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* View Menu Button */}
-        <div className="text-center">
-          <button 
-            onClick={navigateToMenu}
-            className="group border-3 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center space-x-3 mx-auto"
-          >
-            <span>View Full Menu</span>
-            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
-        </div>
-      </div>
-
-      <style>{`
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
-    </section>
     <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8" id="about">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -461,4 +364,4 @@ export default function FoodWalaHero() {
     </section>
     </div>
   );
-}
+};
