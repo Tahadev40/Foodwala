@@ -194,34 +194,72 @@ const RestaurantList = ({ onRestaurantClick }) => {
 // MENU ITEM COMPONENT (WITH SIZE SELECTOR)
 // ============================================
 const MenuItem = ({ item }) => {
-  const [selectedSize, setSelectedSize] = useState('small');
+  // Check if item has pizza sizes OR biryani weights
+  const hasPizzaSizes = !!(item.smallPrice || item.mediumPrice || item.largePrice);
+  // Show biryani weights if EITHER field exists in the item data
+  const hasBiryaniWeights = !!(item.halfKg !== undefined || item.oneKg !== undefined);
+  const hasSizes = hasPizzaSizes || hasBiryaniWeights;
   
-  // Check if item has sizes
-  const hasSizes = !!(item.smallPrice || item.mediumPrice || item.largePrice);
+  // console.log('Item:', item.name, 'halfKg:', item.halfKg, 'oneKg:', item.oneKg, 'hasBiryaniWeights:', hasBiryaniWeights);
   
-  // Size configuration
-  const sizes = hasSizes ? {
-    small: { 
-      price: item.smallPrice, 
-      label: 'Small',
-      subtitle: '8"'
-    },
-    medium: { 
-      price: item.mediumPrice, 
-      label: 'Medium',
-      subtitle: '12"'
-    },
-    large: { 
-      price: item.largePrice, 
-      label: 'Large',
-      subtitle: '16"'
+  // Default selection - first available option for items with multiple size options
+  const getDefaultSize = () => {
+    if (hasBiryaniWeights) {
+      // Always prefer halfKg as default
+      return 'halfKg';
     }
-  } : null;
+    if (hasPizzaSizes) {
+      return item.smallPrice ? 'small' : (item.mediumPrice ? 'medium' : 'large');
+    }
+    return null;
+  };
+  
+  const [selectedSize, setSelectedSize] = useState(getDefaultSize());
+  
+  // Size configuration for pizza OR biryani
+  // For biryani: Always show BOTH halfKg and oneKg options
+  const sizes = hasSizes ? (
+    hasBiryaniWeights ? {
+      halfKg: { 
+        price: item.halfKg || 0, 
+        label: 'Half Kg',
+        subtitle: '½ kg',
+        available: true // Always show this option
+      },
+      oneKg: { 
+        price: item.oneKg || 0, 
+        label: 'One Kg',
+        subtitle: '1 kg',
+        available: true // Always show this option
+      }
+    } : {
+      small: { 
+        price: item.smallPrice || 0, 
+        label: 'Small',
+        subtitle: '8"',
+        available: !!item.smallPrice
+      },
+      medium: { 
+        price: item.mediumPrice || 0, 
+        label: 'Medium',
+        subtitle: '12"',
+        available: !!item.mediumPrice
+      },
+      large: { 
+        price: item.largePrice || 0, 
+        label: 'Large',
+        subtitle: '16"',
+        available: !!item.largePrice
+      }
+    }
+  ) : null;
 
   // Current price based on selected size
-  const currentPrice = hasSizes && sizes 
+  const currentPrice = hasSizes && sizes && selectedSize
     ? (sizes[selectedSize]?.price || item.price)
     : item.price;
+  
+  // console.log('Selected Size:', selectedSize, 'Current Price:', currentPrice);
 
   const addToCart = () => {
     const cartItem = {
@@ -229,8 +267,8 @@ const MenuItem = ({ item }) => {
       price: currentPrice,
       id: hasSizes ? `${item.id}-${selectedSize}` : item.id,
       selectedSize: hasSizes ? selectedSize : null,
-      displayName: hasSizes && sizes
-        ? `${item.name} (${sizes[selectedSize]?.label || 'Small'})`
+      displayName: hasSizes && sizes && selectedSize
+        ? `${item.name} (${sizes[selectedSize]?.label})`
         : item.name
     };
 
@@ -328,13 +366,18 @@ const MenuItem = ({ item }) => {
           {item.description}
         </p>
 
-        {/* Size Selector (Only for items with size variations) */}
+        {/* Size Selector - Works for BOTH pizza sizes AND biryani weights */}
         {hasSizes && sizes && (
           <div className="mb-4">
-            <p className="text-xs text-gray-500 mb-2 font-semibold">Select Size:</p>
+            <p className="text-xs text-gray-500 mb-2 font-semibold">
+              {hasBiryaniWeights ? 'Select Weight:' : 'Select Size:'}
+            </p>
             <div className="flex gap-2">
-              {Object.entries(sizes).map(([key, value]) => (
-                value.price ? (
+              {Object.entries(sizes).map(([key, value]) => {
+                // For biryani: ALWAYS show both buttons
+                // For pizza: Only show if price exists
+                const shouldShow = hasBiryaniWeights ? value.available : value.price > 0;
+                return shouldShow ? (
                   <button
                     key={key}
                     onClick={() => setSelectedSize(key)}
@@ -346,10 +389,12 @@ const MenuItem = ({ item }) => {
                   >
                     <div className="font-bold">{value.label}</div>
                     <div className="text-xs opacity-75">{value.subtitle}</div>
-                    <div className="text-xs font-semibold mt-1">Rs. {value.price}</div>
+                    <div className="text-xs font-semibold mt-1">
+                      {value.price > 0 ? `Rs. ${value.price}` : 'Price TBD'}
+                    </div>
                   </button>
-                ) : null
-              ))}
+                ) : null;
+              })}
             </div>
           </div>
         )}
@@ -399,28 +444,58 @@ const RestaurantMenu = ({ restaurant, onBack }) => {
       const response = await fetch(getRestaurantMenuLinksURL(restaurantId));
       const data = await response.json();
       
+      // console.log('Full Contentful Response:', data);
+      
       const assets = data.includes?.Asset || [];
       const masterItems = data.includes?.Entry || [];
+      
+      // console.log('Master Items:', masterItems);
       
       const transformedMenu = data.items.map(link => {
         const masterItem = masterItems.find(
           item => item.sys.id === link.fields.masterItem?.sys?.id
         );
         
+        // console.log('Master Item Fields:', masterItem?.fields);
+        
         const imageAsset = assets.find(
           asset => asset.sys.id === masterItem?.fields?.image?.sys?.id
         );
         
+        // Pizza sizes
         const smallPrice = masterItem?.fields?.smallPrice;
         const mediumPrice = masterItem?.fields?.mediumPrice;
         const largePrice = masterItem?.fields?.largePrice;
-        const hasSizes = !!(smallPrice || mediumPrice || largePrice);
+        
+        // Biryani weights - CHECK EXACT FIELD NAME
+        // Support multiple field naming conventions
+        const halfKg = masterItem?.fields?.halfKg || 
+                       masterItem?.fields?.halfkg || 
+                       masterItem?.fields?.half_kg ||
+                       masterItem?.fields?.kg; // Your field name
+        
+        const oneKg = masterItem?.fields?.oneKg || 
+                      masterItem?.fields?.onekg || 
+                      masterItem?.fields?.one_kg ||
+                      masterItem?.fields?.fullKg ||
+                      masterItem?.fields?.kg1;
+        
+        // console.log('Biryani Fields - halfKg:', halfKg, 'oneKg:', oneKg);
+        
+        const hasSizes = !!(smallPrice || mediumPrice || largePrice || halfKg || oneKg);
+        
+        // Default price logic
+        let defaultPrice = link.fields.price || 0;
+        if (hasSizes) {
+          // For items with sizes, use the first available size price
+          defaultPrice = halfKg || smallPrice || mediumPrice || largePrice || oneKg || defaultPrice;
+        }
         
         return {
           id: link.sys.id,
           name: masterItem?.fields?.name || 'Unknown Item',
           description: link.fields.customDescription || masterItem?.fields?.description || '',
-          price: hasSizes ? smallPrice : (link.fields.price || 0),
+          price: hasSizes ? defaultPrice : (link.fields.price || 0),
           originalPrice: link.fields.originalPrice || null,
           image: imageAsset?.fields?.file?.url || '',
           rating: masterItem?.fields?.rating || 4.5,
@@ -433,16 +508,21 @@ const RestaurantMenu = ({ restaurant, onBack }) => {
           category: masterItem?.fields?.category || 'others',
           restaurantName: restaurant.name,
           restaurantId: restaurant.id,
+          // Pizza sizes
           smallPrice: smallPrice,
           mediumPrice: mediumPrice,
-          largePrice: largePrice
+          largePrice: largePrice,
+          // Biryani weights
+          halfKg: halfKg,
+          oneKg: oneKg
         };
       }).filter(item => item.isAvailable);
 
+      // console.log('Transformed Menu Items:', transformedMenu);
       setMenuItems(transformedMenu);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching menu:', error);
+      // console.error('Error fetching menu:', error);
       setMenuItems([]);
       setLoading(false);
     }
